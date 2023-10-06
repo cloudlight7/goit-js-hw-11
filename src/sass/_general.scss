@@ -8,6 +8,9 @@ color: black;
 a {
     text-decoration: none;
 }
+img{
+    object-fit: cover;
+}
 
 .container{
     display: flex;

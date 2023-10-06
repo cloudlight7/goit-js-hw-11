@@ -10,63 +10,71 @@ const refs ={
     btnMore: document.querySelector(".load-more"),
 };
 let lightbox = new SimpleLightbox('.gallery a', { captionDelay: 250,  captionsData: 'alt' });
-
+let arrOpenNow = 0;
 let PAGE = 1;
-let serchData;
+let serchData = "";
 refs.form.addEventListener('submit', onSearch);
 refs.btnMore.addEventListener('click', onMoreSearch);
 
 
 function onSearch(event) {
-
-    event.preventDefault();
-    const elemSearch = event.target.elements.searchQuery.value;
-    console.dir(elemSearch);
-    console.log(PAGE);
-    console.log(serchData);
-        if (elemSearch.trim().length === 0) {
-            console.log("ppyyysstt");
-            refs.btnMore.style.display = "none";
-        resPage();
-        return;
-    } else if (elemSearch === serchData) {
-        PAGE += 1;
-      //  console.log(PAGE);
-        } else if (PAGE > 1 && elemSearch !== serchData) {
-          //  console.log(PAGE);
-            PAGE = 1;
-            resPage();
-        } else {
-            console.log("else");
-        serchData = elemSearch;
-    }
-    getPictures(elemSearch, PAGE)
-        .then(data => {
-            console.dir(data.totalHits );
+  event.preventDefault();
+  const elemSearch = event.target.elements.searchQuery.value;
+  if (elemSearch.trim().length === 0) {
+    Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
+    refs.btnMore.style.display = "none";
+    resPage();
+    return;
+  } else if (elemSearch === serchData && arrOpenNow > 0) {
+    PAGE += 1;
+  } else if (elemSearch !== serchData) {
+    arrOpenNow = 0;
+    PAGE = 1;
+    resPage();
+  }
+  serchData = elemSearch;
+  getPictures(elemSearch, PAGE)
+    .then(data => {
+      if (data.totalHits >= 1) {
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        if (arrOpenNow === data.totalHits) {
+          refs.btnMore.style.display = "none";
+          Notify.failure(`Sorry, but these are all the images we found for your request,`);
+          } else {
             refs.gallery.insertAdjacentHTML("beforeend", createMarkup(data.hits));
-            lightbox.refresh();
+            arrOpenNow += data.hits.length;
+          }
+          lightbox.refresh();
+          scroll();
+      } else {
+        Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
+      }
         })
   .catch(error => console.log(error));
-  //  console.dir(event.target.elements.searchQuery.value);
 };
 function resPage() {
-        refs.gallery.innerHTML = '';
-        PAGE = 1;
+  refs.gallery.innerHTML = '';
+  PAGE = 1;
 }
 function onMoreSearch() {
-    PAGE += 1;
-       getPictures(serchData, PAGE)
-        .then(data => {
-            console.dir(data);
-            refs.gallery.insertAdjacentHTML("beforeend", createMarkup(data.hits));
-            lightbox.refresh();
-        })
-  .catch(error => console.log(error));
+  PAGE += 1;
+  getPictures(serchData, PAGE)
+    .then(data => {
+      if (arrOpenNow === data.totalHits) {
+        refs.btnMore.style.display = "none";
+        Notify.failure(`Sorry, but these are all the images we found for your request,`);
+      } else {
+        refs.gallery.insertAdjacentHTML("beforeend", createMarkup(data.hits));
+        arrOpenNow += data.hits.length;
+      }
+      lightbox.refresh();
+      scroll();
+    })
+    .catch(error => console.log(error));
 }
 
 function createMarkup(arr) {
-    console.log(arr);
-    refs.btnMore.style.display = "block";
+  refs.btnMore.style.display = "block";
   return arr
     .map(
       ({
@@ -101,16 +109,13 @@ function createMarkup(arr) {
     .join("");
 }
 
+function scroll() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
 
- /*
-function openData(event) {
-    event.preventDefault();
-    getPictures(serchData)
-  .then(users => console.log(users))
-  .catch(error => console.log(error));
-   // event.preventDefault();
-   // console.dir(serchData);
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
-function serviceFotaCart(page) {
-
-}*/
