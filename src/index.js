@@ -27,7 +27,6 @@ function onSearch(event) {
         if (elemSearch.trim().length === 0) {
             console.log("ppyyysstt");
             refs.btnMore.style.display = "none";
-       // console.log(elemSearch);
         resPage();
         return;
     } else if (elemSearch === serchData) {
