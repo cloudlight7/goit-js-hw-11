@@ -10,6 +10,8 @@ a {
 }
 img{
     object-fit: cover;
+        width: 350px;
+        height: 200px;
 }
 
 .container{
@@ -108,10 +110,7 @@ justify-content: center;
     flex-wrap: wrap;
     justify-content: space-around;
 }
-img{
-    width: 350px;
-    height: 200px;
-}
+
 
 .photo-card {
    // --font-color: #323232;
