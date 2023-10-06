@@ -15,7 +15,6 @@ let PAGE = 1;
 let serchData;
 refs.form.addEventListener('submit', onSearch);
 refs.btnMore.addEventListener('click', onMoreSearch);
-//refs.btnMore.classList.toggle("hidden");
 
 
 function onSearch(event) {
