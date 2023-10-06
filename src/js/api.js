@@ -19,6 +19,5 @@ async function getPictures(userSearch, PAGE) {
     }
     
 }
-
 export { getPictures };
 
