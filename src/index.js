@@ -21,13 +21,11 @@ function onSearch(event) {
   event.preventDefault();
   const elemSearch = event.target.elements.searchQuery.value;
   refs.btnMore.style.display = "none";
+  resPage();
   if (elemSearch.trim().length === 0) {
     Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
-    resPage();
     return;
-  } else if (elemSearch === serchData && arrOpenNow > 0) {
-    PAGE += 1;
-  } else if (elemSearch !== serchData) {
+  }  else if (elemSearch !== serchData) {
     arrOpenNow = 0;
     PAGE = 1;
     resPage();
@@ -36,16 +34,12 @@ function onSearch(event) {
   getPictures(elemSearch, PAGE)
     .then(data => {
       if (data.totalHits >= 1) {
-        Notify.success(`Hooray! We found ${data.totalHits} images.`);
-        if (arrOpenNow === data.totalHits) {
-          refs.btnMore.style.display = "none";
-          Notify.failure(`Sorry, but these are all the images we found for your request,`);
-          } else {
-            refs.gallery.insertAdjacentHTML("beforeend", createMarkup(data.hits, data.totalHits));
-            
-          }
+        if (PAGE === 1) {
+          Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        }
+         refs.gallery.insertAdjacentHTML("beforeend", createMarkup(data.hits, data.totalHits));
           lightbox.refresh();
-          scroll();
+          //scroll();
       } else {
         Notify.failure(`Sorry, there are no images matching your search query. Please try again.`);
       }
